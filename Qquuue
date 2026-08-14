@@ -1,5 +1,5 @@
 -- =============================================
--- Script Name: Quuua (Categorized Tabs Edition v3)
+-- Script Name: Quuua (Categorized Tabs Edition v3.1)
 -- Game: Murder Mystery 2 (MM2)
 -- TikTok: @symashedshi73
 -- =============================================
@@ -558,23 +558,23 @@ CreateButton(TradeTab, "Узнать ценность предметов (Value)
     })
 end)
 
--- Network Hook (Trade Freeze & Wallbang)
-local meta = getrawmetatable(game)
-local oldNamecall = meta.__namecall
-setreadonly(meta, false)
-
-meta.__namecall = newcclosure(function(self, ...)
-    local method = getnamecallmethod()
-    local args = {...}
-
-    if freezeTrade and (method == "FireServer" or method == "InvokeServer") then
-        local remoteName = string.lower(self.Name)
-        if string.find(remoteName, "canceltrade") or string.find(remoteName, "unaccepttrade") or string.find(remoteName, "removetradeitem") then
-            return nil
+-- Safe Network Hook (Безопасный перехват)
+pcall(function()
+    local mt = getrawmetatable(game)
+    local old = mt.__namecall
+    setreadonly(mt, false)
+    
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        
+        if freezeTrade and (method == "FireServer" or method == "InvokeServer") then
+            local name = string.lower(self.Name)
+            if string.find(name, "canceltrade") or string.find(name, "unaccepttrade") or string.find(name, "removetradeitem") then
+                return nil
+            end
         end
-    end
-
-    if wallbangEnabled and (method == "FireServer" or method == "InvokeServer") then
-        local murderer = GetMurderer()
-        if murderer and murderer.Character and murderer.Character:FindFirstChild("HumanoidRootPart") then
-            for i, arg in pairs(arg
+        
+        if wallbangEnabled and (method == "FireServer" or method == "InvokeServer") then
+            local murderer = GetMurderer()
+            if murderer and murderer.Character and murderer.Character:FindFirstChild(
