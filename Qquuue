@@ -1,6 +1,5 @@
 -- =============================================
--- Script Name: Quuua Hub (Gusev Studio Edition - Ultimate)
--- Game: Murder Mystery 2 (MM2)
+-- Script Name: Quuua Hub | MM2 Ultimate Edition
 -- TikTok: @symashedshi73
 -- =============================================
 
@@ -8,13 +7,14 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- GUI Creation
+-- GUI Setup
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "QuuuaPulseGUI"
+ScreenGui.Name = "QuuuaHub"
 ScreenGui.ResetOnSpawn = false
 
 if gethui then
@@ -26,12 +26,12 @@ else
     ScreenGui.Parent = game:GetService("CoreGui")
 end
 
--- Main Compact Frame (Pulse Hub Style with Resize Support)
+-- Main Window (Compact Pulse Style)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 260, 0, 360)
-MainFrame.Position = UDim2.new(0.5, -130, 0.5, -180)
-MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MainFrame.Size = UDim2.new(0, 260, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -130, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -39,84 +39,53 @@ MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
 local MainUICorner = Instance.new("UICorner")
-MainUICorner.CornerRadius = UDim.new(0, 14)
+MainUICorner.CornerRadius = UDim.new(0, 12)
 MainUICorner.Parent = MainFrame
 
--- Gradient for Main Frame
-local MainGradient = Instance.new("UIGradient")
-MainGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 150, 0)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 220, 150)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 170, 0))
-})
-MainGradient.Parent = MainFrame
-
--- Gradient Rotation Loop
-local rotationAngle = 0
-RunService.RenderStepped:Connect(function(dt)
-    rotationAngle = (rotationAngle + (dt * 45)) % 360
-    MainGradient.Rotation = rotationAngle
-end)
-
--- Header Bar
+-- Header
 local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1, -12, 0, 32)
-Header.Position = UDim2.new(0, 6, 0, 6)
-Header.BackgroundTransparency = 1
+Header.Size = UDim2.new(1, 0, 0, 35)
+Header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Header.BorderSizePixel = 0
 Header.Parent = MainFrame
 
 local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(1, -40, 1, 0)
+TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = " Quuua Hub 💕 [Ultimate]"
-TitleText.TextColor3 = Color3.fromRGB(0, 0, 0)
-TitleText.TextSize = 16
+TitleText.Text = "Quuua Hub | MM2"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 15
 TitleText.Font = Enum.Font.SourceSansBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = Header
 
 -- Close Button
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 28, 0, 28)
-CloseBtn.Position = UDim2.new(1, -28, 0, 2)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(220, 0, 0)
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.Position = UDim2.new(1, -30, 0, 4)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextSize = 14
-CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize, CloseBtn.Font = 13, Enum.Font.SourceSansBold
 CloseBtn.Parent = Header
-
-local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 6)
-CloseCorner.Parent = CloseBtn
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
 CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Footer TikTok / Studio text
-local FooterText = Instance.new("TextLabel")
-FooterText.Size = UDim2.new(1, 0, 0, 20)
-FooterText.Position = UDim2.new(0, 0, 1, -22)
-FooterText.BackgroundTransparency = 1
-FooterText.Text = "Gusev Studio | @symashedshi73"
-FooterText.TextColor3 = Color3.fromRGB(0, 0, 0)
-FooterText.TextSize = 12
-FooterText.Font = Enum.Font.SourceSansBold
-FooterText.Parent = MainFrame
-
--- Compact Scrolling Container
+-- Scrolling Container
 local Container = Instance.new("ScrollingFrame")
-Container.Size = UDim2.new(1, -12, 1, -75)
-Container.Position = UDim2.new(0, 6, 0, 42)
+Container.Size = UDim2.new(1, -10, 1, -45)
+Container.Position = UDim2.new(0, 5, 0, 40)
 Container.BackgroundTransparency = 1
 Container.BorderSizePixel = 0
-Container.ScrollBarThickness = 3
-Container.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+Container.ScrollBarThickness = 4
 Container.Parent = MainFrame
 
 local UIList = Instance.new("UIListLayout")
-UIList.Padding = UDim.new(0, 5)
+UIList.Padding = UDim.new(0, 6)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
 UIList.Parent = Container
 
@@ -124,32 +93,41 @@ UIList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     Container.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y + 10)
 end)
 
--- Helper to create compact toggles
+-- Helpers
+local function CreateSection(text)
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(1, -4, 0, 22)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = "=== " .. text .. " ==="
+    lbl.TextColor3 = Color3.fromRGB(255, 170, 0)
+    lbl.TextSize = 13
+    lbl.Font = Enum.Font.SourceSansBold
+    lbl.Parent = Container
+end
+
 local function CreateToggle(name, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -4, 0, 32)
-    btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Size = UDim2.new(1, -4, 0, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     btn.Text = name .. ": ВЫКЛ"
-    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.TextSize = 13
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = Container
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = btn
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
     local active = false
     btn.MouseButton1Click:Connect(function()
         active = not active
-        btn.BackgroundColor3 = active and Color3.fromRGB(255, 200, 100) or Color3.fromRGB(255, 255, 255)
+        btn.BackgroundColor3 = active and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(50, 50, 50)
         btn.Text = active and (name .. ": ВКЛ") or (name .. ": ВЫКЛ")
         callback(active)
     end)
     return btn
 end
 
--- Roles Helper
+-- Role Detectors
 local function GetMurderer()
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= LocalPlayer and p.Character then
@@ -161,70 +139,128 @@ local function GetMurderer()
     return nil
 end
 
--- =============================================
--- FEATURES IMPLEMENTATION
--- =============================================
+local function GetSheriff()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            if p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
+                return p
+            end
+        end
+    end
+    return nil
+end
 
--- 1. Автонаводка на Киллера (Шериф)
-local aimbotEnabled = false
-CreateToggle("Автонаводка на Киллера", function(val)
-    aimbotEnabled = val
-end)
+-- =============================================
+-- ФУНКЦИИ ШЕРИФА
+-- =============================================
+CreateSection("ФУНКЦИИ ШЕРИФА")
+
+local sherAimbot = false
+CreateToggle("Автонаводка на Киллера", function(val) sherAimbot = val end)
 
 RunService.RenderStepped:Connect(function()
-    if aimbotEnabled then
-        local murderer = GetMurderer()
-        if murderer and murderer.Character and murderer.Character:FindFirstChild("Head") then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, murderer.Character.Head.Position)
+    if sherAimbot then
+        local m = GetMurderer()
+        if m and m.Character and m.Character:FindFirstChild("Head") then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, m.Character.Head.Position)
         end
     end
 end)
 
--- 2. Прострел через стены (Wallbang)
-local wallbangEnabled = false
-CreateToggle("Прострел через стены", function(val)
-    wallbangEnabled = val
+local wallbang = false
+CreateToggle("Прострел стен (Шериф/Стрельба)", function(val) wallbang = val end)
+
+pcall(function()
+    local mt = getrawmetatable(game)
+    local old = mt.__namecall
+    setreadonly(mt, false)
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        if wallbang and (method == "FireServer" or method == "InvokeServer") then
+            if string.find(string.lower(self.Name), "shoot") then
+                local m = GetMurderer()
+                if m and m.Character and m.Character:FindFirstChild("Head") then
+                    for i, arg in ipairs(args) do
+                        if typeof(arg) == "Vector3" then
+                            args[i] = m.Character.Head.Position
+                        end
+                    end
+                end
+            end
+        end
+        return old(self, unpack(args))
+    end)
+    setreadonly(mt, true)
 end)
 
--- 3. Убить всех (Киллер)
-CreateToggle("Убить всех (Киллер)", function(val)
+-- =============================================
+-- ФУНКЦИИ КИЛЛЕРА
+-- =============================================
+CreateSection("ФУНКЦИИ КИЛЛЕРА")
+
+CreateToggle("Убить всех (Авто-телепорт)", function(val)
     if val then
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                 local char = LocalPlayer.Character
-                if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Knife") then
-                    char.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
-                    local tool = char:FindFirstChild("Knife")
-                    if tool then tool:Activate() end
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
+                    if knife then
+                        knife.Parent = char
+                        char.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
+                        task.wait(0.04)
+                        knife:Activate()
+                    end
                 end
             end
         end
     end
 end)
 
--- 4. SpeedHack (СП - Скорость)
-local speedEnabled = false
-CreateToggle("SpeedHack (SP)", function(val)
-    speedEnabled = val
-end)
+local silentKill = false
+CreateToggle("Тихий килл (Аура ножа)", function(val) silentKill = val end)
 
-RunService.Stepped:Connect(function()
-    if speedEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-        local hum = LocalPlayer.Character.Humanoid
-        if hum.MoveDirection.Magnitude > 0 then
-            LocalPlayer.Character:TranslateBy(hum.MoveDirection * 0.8)
+RunService.RenderStepped:Connect(function()
+    if silentKill then
+        local char = LocalPlayer.Character
+        if char and (char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")) then
+            local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
+            knife.Parent = char
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = p.Character.HumanoidRootPart
+                    if (char.HumanoidRootPart.Position - hrp.Position).Magnitude < 15 then
+                        knife:Activate()
+                    end
+                end
+            end
         end
     end
 end)
 
--- 5. Noclip (Проход сквозь стены)
-local noclipEnabled = false
-CreateToggle("Noclip (Сквозь стены)", function(val)
-    noclipEnabled = val
-end)
+-- =============================================
+-- ОБЩИЕ ФУНКЦИИ
+-- =============================================
+CreateSection("ОБЩИЕ ФУНКЦИИ")
+
+local speed = false
+CreateToggle("SpeedHack (SP)", function(val) speed = val end)
 
 RunService.Stepped:Connect(function()
-    if noclipEnabled and LocalPlayer.Character then
+    if speed and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        local hum = LocalPlayer.Character.Humanoid
+        if hum.MoveDirection.Magnitude > 0 then
+            LocalPlayer.Character:TranslateBy(hum.MoveDirection * 0.9)
+        end
+    end
+end)
+
+local noclip = false
+CreateToggle("Noclip (Сквозь стены)", function(val) noclip = val end)
+
+RunService.Stepped:Connect(function()
+    if noclip and LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") and part.CanCollide then
                 part.CanCollide = false
@@ -233,70 +269,27 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- 6. Freeze (Заморозка сервера / лобби визуально или стоп киллера)
-local freezeEnabled = false
-CreateToggle("Freeze (Заморозка игроков)", function(val)
-    freezeEnabled = val
-end)
+local bigHead = false
+CreateToggle("BigHead (Большие головы)", function(val) bigHead = val end)
 
 RunService.RenderStepped:Connect(function()
-    if freezeEnabled then
+    if bigHead then
         for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                p.Character.HumanoidRootPart.Anchored = true
-            end
-        end
-    else
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                p.Character.HumanoidRootPart.Anchored = false
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                local head = p.Character.Head
+                head.Size = Vector3.new(4, 4, 4)
+                head.CanCollide = false
             end
         end
     end
 end)
 
--- 7. Trade GUI / Force Accept (Трейд-хак)
-CreateToggle("Trade Accept Exploit", function(val)
-    if val then
-        pcall(function()
-            local tradeApp = LocalPlayer.PlayerGui:FindFirstChild("TradeGui") or LocalPlayer.PlayerGui:FindFirstChild("Trade")
-            if tradeApp then
-                -- Авто-подтверждение трейда
-                print("Trade exploit active")
-            end
-        end)
-    end
-end)
-
--- =============================================
--- NETWORK HOOK (Wallbang execution)
--- =============================================
-pcall(function()
-    local mt = getrawmetatable(game)
-    local old = mt.__namecall
-    setreadonly(mt, false)
-    
-    mt.__namecall = newcclosure(function(self, ...)
-        local method = getnamecallmethod()
-        local args = {...}
-        
-        if wallbangEnabled and (method == "FireServer" or method == "InvokeServer") then
-            local name = string.lower(self.Name)
-            if string.find(name, "shoot") or string.find(name, "hit") then
-                local murderer = GetMurderer()
-                if murderer and murderer.Character and murderer.Character:FindFirstChild("Head") then
-                    for i, arg in ipairs(args) do
-                        if typeof(arg) == "Vector3" then
-                            args[i] = murderer.Character.Head.Position
-                        end
-                    end
-                end
-            end
-        end
-        
-        return old(self, unpack(args))
-    end)
-    setreadonly(mt, true)
+local fullbright = false
+CreateToggle("Fullbright (Яркий свет)", function(val)
+    fullbright = val
+    Lighting.Brightness = val and 2 or 1
+    Lighting.ClockTime = val and 14 or 12
+    Lighting.GlobalShadows = not val
 end)
 
 -- =============================================
@@ -304,24 +297,20 @@ end)
 -- =============================================
 local ResizeHandle = Instance.new("TextButton")
 ResizeHandle.Size = UDim2.new(0, 16, 0, 16)
-ResizeHandle.Position = UDim2.new(1, -16, 1, -22)
+ResizeHandle.Position = UDim2.new(1, -16, 1, -18)
 ResizeHandle.BackgroundTransparency = 1
 ResizeHandle.Text = "◢"
-ResizeHandle.TextColor3 = Color3.fromRGB(0, 0, 0)
+ResizeHandle.TextColor3 = Color3.fromRGB(200, 200, 200)
 ResizeHandle.TextSize = 12
 ResizeHandle.Parent = MainFrame
 
 local isResizing = false
-ResizeHandle.MouseButton1Down:Connect(function()
-    isResizing = true
-end)
-
+ResizeHandle.MouseButton1Down:Connect(function() isResizing = true end)
 UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         isResizing = false
     end
 end)
-
 UserInputService.InputChanged:Connect(function(input)
     if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local mousePos = input.Position
