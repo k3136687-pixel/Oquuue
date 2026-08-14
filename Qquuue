@@ -1,5 +1,5 @@
 -- =============================================
--- Script Name: Quuua (Categorized Tabs Edition)
+-- Script Name: Quuua (Categorized Tabs Edition v3)
 -- Game: Murder Mystery 2 (MM2)
 -- TikTok: @symashedshi73
 -- =============================================
@@ -27,11 +27,11 @@ else
     ScreenGui.Parent = game:GetService("CoreGui")
 end
 
--- Main Frame
+-- Main Frame (С поддержкой изменения размера)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 380, 0, 460)
-MainFrame.Position = UDim2.new(0.5, -190, 0.5, -230)
+MainFrame.Size = UDim2.new(0, 360, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -180, 0.5, -210)
 MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -40,7 +40,7 @@ MainFrame.ClipsDescendants = false
 MainFrame.Parent = ScreenGui
 
 local MainUICorner = Instance.new("UICorner")
-MainUICorner.CornerRadius = UDim.new(0, 24)
+MainUICorner.CornerRadius = UDim.new(0, 20)
 MainUICorner.Parent = MainFrame
 
 -- Gradient for Main Frame
@@ -55,12 +55,12 @@ MainGradient.Parent = MainFrame
 -- Minimized Bar
 local MiniBar = Instance.new("TextButton")
 MiniBar.Name = "MiniBar"
-MiniBar.Size = UDim2.new(0, 320, 0, 50)
-MiniBar.Position = UDim2.new(0.5, -160, 0.1, 0)
+MiniBar.Size = UDim2.new(0, 280, 0, 45)
+MiniBar.Position = UDim2.new(0.5, -140, 0.1, 0)
 MiniBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 MiniBar.Text = "Quuua script 💕"
 MiniBar.TextColor3 = Color3.fromRGB(0, 0, 0)
-MiniBar.TextSize = 26
+MiniBar.TextSize = 24
 MiniBar.Font = Enum.Font.SourceSansBold
 MiniBar.Visible = false
 MiniBar.Active = true
@@ -68,7 +68,7 @@ MiniBar.Draggable = true
 MiniBar.Parent = ScreenGui
 
 local MiniUICorner = Instance.new("UICorner")
-MiniUICorner.CornerRadius = UDim.new(0, 16)
+MiniUICorner.CornerRadius = UDim.new(0, 14)
 MiniUICorner.Parent = MiniBar
 
 local MiniGradient = Instance.new("UIGradient")
@@ -89,19 +89,19 @@ end)
 
 -- Header Bar
 local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1, -20, 0, 45)
-Header.Position = UDim2.new(0, 10, 0, 10)
+Header.Size = UDim2.new(1, -16, 0, 40)
+Header.Position = UDim2.new(0, 8, 0, 8)
 Header.BackgroundTransparency = 1
 Header.Parent = MainFrame
 
 local TitleBox = Instance.new("Frame")
-TitleBox.Size = UDim2.new(1, -95, 1, 0)
+TitleBox.Size = UDim2.new(1, -85, 1, 0)
 TitleBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TitleBox.BorderSizePixel = 0
 TitleBox.Parent = Header
 
 local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
+TitleCorner.CornerRadius = UDim.new(0, 10)
 TitleCorner.Parent = TitleBox
 
 local TitleText = Instance.new("TextLabel")
@@ -109,19 +109,19 @@ TitleText.Size = UDim2.new(1, 0, 1, 0)
 TitleText.BackgroundTransparency = 1
 TitleText.Text = "  Quuua 💕"
 TitleText.TextColor3 = Color3.fromRGB(0, 0, 0)
-TitleText.TextSize = 28
+TitleText.TextSize = 24
 TitleText.Font = Enum.Font.SourceSansBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = TitleBox
 
 -- Minimize Button
 local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 40, 1, 0)
-MinBtn.Position = UDim2.new(1, -85, 0, 0)
+MinBtn.Size = UDim2.new(0, 36, 1, 0)
+MinBtn.Position = UDim2.new(1, -76, 0, 0)
 MinBtn.BackgroundColor3 = Color3.fromRGB(160, 160, 160)
 MinBtn.Text = "—"
 MinBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-MinBtn.TextSize = 26
+MinBtn.TextSize = 22
 MinBtn.Font = Enum.Font.SourceSansBold
 MinBtn.Parent = Header
 
@@ -131,12 +131,12 @@ MinCorner.Parent = MinBtn
 
 -- Close Button
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 40, 1, 0)
-CloseBtn.Position = UDim2.new(1, -40, 0, 0)
+CloseBtn.Size = UDim2.new(0, 36, 1, 0)
+CloseBtn.Position = UDim2.new(1, -36, 0, 0)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(220, 0, 0)
 CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-CloseBtn.TextSize = 26
+CloseBtn.TextSize = 22
 CloseBtn.Font = Enum.Font.SourceSansBold
 CloseBtn.Parent = Header
 
@@ -146,12 +146,12 @@ CloseCorner.Parent = CloseBtn
 
 -- TikTok Footer Text
 local FooterText = Instance.new("TextLabel")
-FooterText.Size = UDim2.new(1, 0, 0, 30)
-FooterText.Position = UDim2.new(0, 0, 1, -30)
+FooterText.Size = UDim2.new(1, 0, 0, 25)
+FooterText.Position = UDim2.new(0, 0, 1, -26)
 FooterText.BackgroundTransparency = 1
 FooterText.Text = "tiktok @symashedshi73"
 FooterText.TextColor3 = Color3.fromRGB(0, 0, 0)
-FooterText.TextSize = 18
+FooterText.TextSize = 16
 FooterText.Font = Enum.Font.SourceSansBold
 FooterText.Parent = MainFrame
 
@@ -160,14 +160,14 @@ FooterText.Parent = MainFrame
 -- =============================================
 
 local TabContainer = Instance.new("Frame")
-TabContainer.Size = UDim2.new(1, -20, 0, 35)
-TabContainer.Position = UDim2.new(0, 10, 0, 60)
+TabContainer.Size = UDim2.new(1, -16, 0, 32)
+TabContainer.Position = UDim2.new(0, 8, 0, 54)
 TabContainer.BackgroundTransparency = 1
 TabContainer.Parent = MainFrame
 
 local TabListLayout = Instance.new("UIListLayout")
 TabListLayout.FillDirection = Enum.FillDirection.Horizontal
-TabListLayout.Padding = UDim.new(0, 5)
+TabListLayout.Padding = UDim.new(0, 4)
 TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 TabListLayout.Parent = TabContainer
 
@@ -180,11 +180,11 @@ local currentTab = nil
 
 local function CreateTab(tabName)
     local tabBtn = Instance.new("TextButton")
-    tabBtn.Size = UDim2.new(0, 82, 1, 0)
+    tabBtn.Size = UDim2.new(0, 75, 1, 0)
     tabBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     tabBtn.Text = tabName
     tabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    tabBtn.TextSize = 15
+    tabBtn.TextSize = 14
     tabBtn.Font = Enum.Font.SourceSansBold
     tabBtn.Parent = TabContainer
 
@@ -194,17 +194,17 @@ local function CreateTab(tabName)
 
     local scrollFrame = Instance.new("ScrollingFrame")
     scrollFrame.Name = tabName .. "Scroll"
-    scrollFrame.Size = UDim2.new(1, -20, 1, -140)
-    scrollFrame.Position = UDim2.new(0, 10, 0, 100)
+    scrollFrame.Size = UDim2.new(1, -16, 1, -125)
+    scrollFrame.Position = UDim2.new(0, 8, 0, 92)
     scrollFrame.BackgroundTransparency = 1
     scrollFrame.BorderSizePixel = 0
-    scrollFrame.ScrollBarThickness = 6
+    scrollFrame.ScrollBarThickness = 5
     scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
     scrollFrame.Visible = false
     scrollFrame.Parent = ContentFolder
 
     local listLayout = Instance.new("UIListLayout")
-    listLayout.Padding = UDim.new(0, 8)
+    listLayout.Padding = UDim.new(0, 6)
     listLayout.SortOrder = Enum.SortOrder.LayoutOrder
     listLayout.Parent = scrollFrame
 
@@ -241,26 +241,28 @@ local MiscTab = CreateTab("Разное")
 -- Helper Function for Buttons inside Tabs
 local function CreateButton(parentScroll, text, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 40)
+    btn.Size = UDim2.new(1, -8, 0, 36)
     btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    btn.TextSize = 16
+    btn.TextSize = 15
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = parentScroll
 
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 10)
+    corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = btn
 
     btn.MouseButton1Click:Connect(callback)
     return btn
 end
 
--- Resize Window Handler
+-- =============================================
+-- RESIZE WINDOW FUNCTIONALITY (Растягивание окна)
+-- =============================================
 local ResizeHandle = Instance.new("TextButton")
-ResizeHandle.Size = UDim2.new(0, 16, 0, 16)
-ResizeHandle.Position = UDim2.new(1, -16, 1, -16)
+ResizeHandle.Size = UDim2.new(0, 18, 0, 18)
+ResizeHandle.Position = UDim2.new(1, -18, 1, -18)
 ResizeHandle.BackgroundTransparency = 1
 ResizeHandle.Text = "◢"
 ResizeHandle.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -268,7 +270,9 @@ ResizeHandle.TextSize = 14
 ResizeHandle.Parent = MainFrame
 
 local isResizing = false
-ResizeHandle.MouseButton1Down:Connect(function() isResizing = true end)
+ResizeHandle.MouseButton1Down:Connect(function()
+    isResizing = true
+end)
 
 UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -279,8 +283,8 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local mousePos = input.Position
-        local newWidth = math.max(340, mousePos.X - MainFrame.AbsolutePosition.X)
-        local newHeight = math.max(280, mousePos.Y - MainFrame.AbsolutePosition.Y)
+        local newWidth = math.max(300, mousePos.X - MainFrame.AbsolutePosition.X)
+        local newHeight = math.max(250, mousePos.Y - MainFrame.AbsolutePosition.Y)
         MainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
     end
 end)
@@ -300,9 +304,8 @@ CloseBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =============================================
--- FEATURES CODE BY TABS
+-- ROLES DETECTION HELPERS
 -- =============================================
-
 local function GetMurderer()
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= LocalPlayer and p.Character then
@@ -314,29 +317,71 @@ local function GetMurderer()
     return nil
 end
 
+local function GetSheriff()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            if p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
+                return p
+            end
+        end
+    end
+    return nil
+end
+
+-- Функция Флинга (Fling) игрока
+local function FlingTarget(targetPlayer)
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetHRP = targetPlayer.Character.HumanoidRootPart
+        local oldPos = hrp.CFrame
+        
+        local bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bv.Velocity = Vector3.new(90000, 90000, 90000)
+        bv.Parent = hrp
+        
+        local connection
+        connection = RunService.RenderStepped:Connect(function()
+            hrp.CFrame = targetHRP.CFrame
+        end)
+        
+        task.wait(0.5)
+        connection:Disconnect()
+        bv:Destroy()
+        hrp.CFrame = oldPos
+    end
+end
+
+-- =============================================
+-- FEATURES CODE BY TABS
+-- =============================================
+
 -- TAB 1: ГЛАВНАЯ (MAIN)
 
 -- Speed Slider
 local SpeedContainer = Instance.new("Frame")
-SpeedContainer.Size = UDim2.new(1, -10, 0, 50)
+SpeedContainer.Size = UDim2.new(1, -8, 0, 45)
 SpeedContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 SpeedContainer.Parent = MainTab
 
 local SpeedCorner = Instance.new("UICorner")
-SpeedCorner.CornerRadius = UDim.new(0, 10)
+SpeedCorner.CornerRadius = UDim.new(0, 8)
 SpeedCorner.Parent = SpeedContainer
 
 local SpeedLabel = Instance.new("TextLabel")
-SpeedLabel.Size = UDim2.new(1, 0, 0, 20)
+SpeedLabel.Size = UDim2.new(1, 0, 0, 18)
 SpeedLabel.BackgroundTransparency = 1
 SpeedLabel.Text = "Скорость: 16"
 SpeedLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
 SpeedLabel.Font = Enum.Font.SourceSansBold
-SpeedLabel.TextSize = 16
+SpeedLabel.TextSize = 15
 SpeedLabel.Parent = SpeedContainer
 
 local SliderTrack = Instance.new("Frame")
-SliderTrack.Size = UDim2.new(0.8, 0, 0, 8)
+SliderTrack.Size = UDim2.new(0.8, 0, 0, 6)
 SliderTrack.Position = UDim2.new(0.1, 0, 0.65, 0)
 SliderTrack.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 SliderTrack.BorderSizePixel = 0
@@ -388,11 +433,11 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Aimbot
+-- Aimbot (Автонаводка)
 local aimbotEnabled = false
-local AimBtn = CreateButton(MainTab, "Аимбот на Убийцу: ВЫКЛ", function()
+local AimBtn = CreateButton(MainTab, "Автонаводка (Aimbot): ВЫКЛ", function()
     aimbotEnabled = not aimbotEnabled
-    AimBtn.Text = aimbotEnabled and "Аимбот на Убийцу: ВКЛ" or "Аимбот на Убийцу: ВЫКЛ"
+    AimBtn.Text = aimbotEnabled and "Автонаводка (Aimbot): ВКЛ" or "Автонаводка (Aimbot): ВЫКЛ"
 end)
 
 RunService.RenderStepped:Connect(function()
@@ -407,7 +452,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Wallbang
+-- Wallbang (Стрельба через стены)
 local wallbangEnabled = false
 local WallBtn = CreateButton(MainTab, "Стрельба через стены: ВЫКЛ", function()
     wallbangEnabled = not wallbangEnabled
@@ -416,8 +461,9 @@ end)
 
 -- Noclip
 local noclip = false
-CreateButton(MainTab, "Noclip (Сквозь стены)", function()
+local NoclipBtn = CreateButton(MainTab, "Noclip (Сквозь стены): ВЫКЛ", function()
     noclip = not noclip
+    NoclipBtn.Text = noclip and "Noclip (Сквозь стены): ВКЛ" or "Noclip (Сквозь стены): ВЫКЛ"
 end)
 
 RunService.Stepped:Connect(function()
@@ -435,8 +481,9 @@ end)
 
 -- ESP
 local espEnabled = false
-CreateButton(VisualsTab, "ESP (Роли Игроков)", function()
+local EspBtn = CreateButton(VisualsTab, "ESP (Роли Игроков): ВЫКЛ", function()
     espEnabled = not espEnabled
+    EspBtn.Text = espEnabled and "ESP (Роли Игроков): ВКЛ" or "ESP (Роли Игроков): ВЫКЛ"
     if not espEnabled then
         for _, p in pairs(Players:GetPlayers()) do
             if p.Character and p.Character:FindFirstChild("Highlight") then
@@ -530,38 +577,4 @@ meta.__namecall = newcclosure(function(self, ...)
     if wallbangEnabled and (method == "FireServer" or method == "InvokeServer") then
         local murderer = GetMurderer()
         if murderer and murderer.Character and murderer.Character:FindFirstChild("HumanoidRootPart") then
-            for i, arg in pairs(args) do
-                if typeof(arg) == "Vector3" then
-                    args[i] = murderer.Character.HumanoidRootPart.Position
-                end
-            end
-        end
-    end
-
-    return oldNamecall(self, unpack(args))
-end)
-setreadonly(meta, true)
-
-
--- TAB 4: РАЗНОЕ (MISC)
-
-CreateButton(MiscTab, "Автоподбор оружия", function()
-    local gunDrop = Workspace:FindFirstChild("GunDrop", true)
-    if gunDrop and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        LocalPlayer.Character.HumanoidRootPart.CFrame = gunDrop.CFrame
-    end
-end)
-
-CreateButton(MiscTab, "Убить всех (Kill All)", function()
-    if not LocalPlayer.Character then return end
-    local knife = LocalPlayer.Character:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
-    if knife then
-        knife.Parent = LocalPlayer.Character
-        for _, target in pairs(Players:GetPlayers()) do
-            if target ~= LocalPlayer and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
-                task.wait(0.2)
-            end
-        end
-    end
-end)
+            for i, arg in pairs(arg
