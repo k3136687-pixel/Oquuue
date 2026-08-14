@@ -26,11 +26,11 @@ else
     ScreenGui.Parent = game:GetService("CoreGui")
 end
 
--- Main Window (Compact Pulse Style)
+-- Main Window
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 260, 0, 400)
-MainFrame.Position = UDim2.new(0.5, -130, 0.5, -200)
+MainFrame.Size = UDim2.new(0, 300, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -210)
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -38,9 +38,7 @@ MainFrame.Draggable = true
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
-local MainUICorner = Instance.new("UICorner")
-MainUICorner.CornerRadius = UDim.new(0, 12)
-MainUICorner.Parent = MainFrame
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
 -- Header
 local Header = Instance.new("Frame")
@@ -50,7 +48,7 @@ Header.BorderSizePixel = 0
 Header.Parent = MainFrame
 
 local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -40, 1, 0)
+TitleText.Size = UDim2.new(1, -65, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
 TitleText.Text = "Quuua Hub | MM2"
@@ -60,7 +58,43 @@ TitleText.Font = Enum.Font.SourceSansBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = Header
 
--- Close Button
+-- Mini Bar (Свернутая версия)
+local MiniBar = Instance.new("TextButton")
+MiniBar.Size = UDim2.new(0, 180, 0, 32)
+MiniBar.Position = UDim2.new(0.5, -90, 0.1, 0)
+MiniBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MiniBar.Text = "Quuua Hub | @symashedshi73"
+MiniBar.TextColor3 = Color3.fromRGB(255, 170, 0)
+MiniBar.TextSize = 12
+MiniBar.Font = Enum.Font.SourceSansBold
+MiniBar.Visible = false
+MiniBar.Active = true
+MiniBar.Draggable = true
+MiniBar.Parent = ScreenGui
+Instance.new("UICorner", MiniBar).CornerRadius = UDim.new(0, 8)
+
+-- Minimize Button (-)
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 26, 0, 26)
+MinBtn.Position = UDim2.new(1, -60, 0, 4)
+MinBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.TextSize, MinBtn.Font = 14, Enum.Font.SourceSansBold
+MinBtn.Parent = Header
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+
+MinBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    MiniBar.Visible = true
+end)
+
+MiniBar.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    MiniBar.Visible = false
+end)
+
+-- Close Button (X)
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 26, 0, 26)
 CloseBtn.Position = UDim2.new(1, -30, 0, 4)
@@ -75,45 +109,106 @@ CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Scrolling Container
-local Container = Instance.new("ScrollingFrame")
-Container.Size = UDim2.new(1, -10, 1, -45)
-Container.Position = UDim2.new(0, 5, 0, 40)
-Container.BackgroundTransparency = 1
-Container.BorderSizePixel = 0
-Container.ScrollBarThickness = 4
-Container.Parent = MainFrame
+-- Tab System (Панель вкладок)
+local TabBar = Instance.new("Frame")
+TabBar.Size = UDim2.new(1, 0, 0, 30)
+TabBar.Position = UDim2.new(0, 0, 0, 35)
+TabBar.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+TabBar.BorderSizePixel = 0
+TabBar.Parent = MainFrame
 
-local UIList = Instance.new("UIListLayout")
-UIList.Padding = UDim.new(0, 6)
-UIList.SortOrder = Enum.SortOrder.LayoutOrder
-UIList.Parent = Container
+local TabListLayout = Instance.new("UIListLayout")
+TabListLayout.FillDirection = Enum.FillDirection.Horizontal
+TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+TabListLayout.Parent = TabBar
 
-UIList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    Container.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y + 10)
-end)
+local PagesFolder = Instance.new("Folder")
+PagesFolder.Name = "PagesFolder"
+PagesFolder.Parent = MainFrame
 
--- Helpers
-local function CreateSection(text)
-    local lbl = Instance.new("TextLabel")
-    lbl.Size = UDim2.new(1, -4, 0, 22)
-    lbl.BackgroundTransparency = 1
-    lbl.Text = "=== " .. text .. " ==="
-    lbl.TextColor3 = Color3.fromRGB(255, 170, 0)
-    lbl.TextSize = 13
-    lbl.Font = Enum.Font.SourceSansBold
-    lbl.Parent = Container
+-- Контейнер для страниц
+local PagesContainer = Instance.new("Frame")
+PagesContainer.Size = UDim2.new(1, -10, 1, -75)
+PagesContainer.Position = UDim2.new(0, 5, 0, 70)
+PagesContainer.BackgroundTransparency = 1
+PagesContainer.Parent = MainFrame
+
+local pages = {}
+local tabButtons = {}
+local activeTab = nil
+
+local function CreatePage(name)
+    local scroller = Instance.new("ScrollingFrame")
+    scroller.Size = UDim2.new(1, 0, 1, 0)
+    scroller.BackgroundTransparency = 1
+    scroller.BorderSizePixel = 0
+    scroller.ScrollBarThickness = 4
+    scroller.Visible = false
+    scroller.Parent = PagesContainer
+
+    local uiList = Instance.new("UIListLayout")
+    uiList.Padding = UDim.new(0, 6)
+    uiList.SortOrder = Enum.SortOrder.LayoutOrder
+    uiList.Parent = scroller
+
+    uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        scroller.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
+    end)
+
+    pages[name] = scroller
+
+    -- Кнопка вкладки сверху
+    local tBtn = Instance.new("TextButton")
+    tBtn.Size = UDim2.new(0, 55, 1, 0)
+    tBtn.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+    tBtn.BorderSizePixel = 0
+    tBtn.Text = name
+    tBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    tBtn.TextSize = 11
+    tBtn.Font = Enum.Font.SourceSansBold
+    tBtn.Parent = TabBar
+
+    tBtn.MouseButton1Click:Connect(function()
+        for pName, page in pairs(pages) do
+            page.Visible = (pName == name)
+        end
+        for _, btn in pairs(tabButtons) do
+            btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+            btn.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+        end
+        tBtn.TextColor3 = Color3.fromRGB(255, 170, 0)
+        tBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
+
+    tabButtons[name] = tBtn
+    if not activeTab then
+        activeTab = name
+        scroller.Visible = true
+        tBtn.TextColor3 = Color3.fromRGB(255, 170, 0)
+        tBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end
+
+    return scroller
 end
 
-local function CreateToggle(name, callback)
+-- Создаем вкладки
+local PageGeneral = CreatePage("Главная")
+local PageSheriff = CreatePage("Шериф")
+local PageKiller = CreatePage("Киллер")
+local PageVisual = CreatePage("Визуал")
+local PageSettings = CreatePage("Настройки")
+
+-- Хелперы
+local function CreateToggle(targetPage, name, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -4, 0, 30)
     btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     btn.Text = name .. ": ВЫКЛ"
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 13
+    btn.TextSize = 12
     btn.Font = Enum.Font.SourceSansBold
-    btn.Parent = Container
+    btn.Parent = targetPage
 
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
@@ -139,24 +234,100 @@ local function GetMurderer()
     return nil
 end
 
-local function GetSheriff()
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character then
-            if p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
-                return p
-            end
+-- =============================================
+-- ВКЛАДКА: НАСТРОЙКИ (Тема и Кроссхайр)
+-- =============================================
+local CrosshairGui = Instance.new("Folder")
+CrosshairGui.Name = "CustomCrosshair"
+CrosshairGui.Parent = ScreenGui
+
+local CHLine1 = Instance.new("Frame", CrosshairGui)
+CHLine1.Size = UDim2.new(0, 12, 0, 2)
+CHLine1.Position = UDim2.new(0.5, -6, 0.5, -1)
+CHLine1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CHLine1.BorderSizePixel = 0
+CHLine1.Visible = false
+
+local CHLine2 = Instance.new("Frame", CrosshairGui)
+CHLine2.Size = UDim2.new(0, 2, 0, 12)
+CHLine2.Position = UDim2.new(0.5, -1, 0.5, -6)
+CHLine2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CHLine2.BorderSizePixel = 0
+CHLine2.Visible = false
+
+local crosshairEnabled = false
+CreateToggle(PageSettings, "Кастомный прицел", function(val)
+    crosshairEnabled = val
+    CHLine1.Visible = val
+    CHLine2.Visible = val
+end)
+
+local themeMode = "Стандарт"
+local themeBtn = Instance.new("TextButton")
+themeBtn.Size = UDim2.new(1, -4, 0, 30)
+themeBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+themeBtn.Text = "Тема меню: Стандарт"
+themeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+themeBtn.TextSize = 12
+themeBtn.Font = Enum.Font.SourceSansBold
+themeBtn.Parent = PageSettings
+Instance.new("UICorner", themeBtn).CornerRadius = UDim.new(0, 6)
+
+themeBtn.MouseButton1Click:Connect(function()
+    if themeMode == "Стандарт" then
+        themeMode = "Красный"
+        Header.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
+        themeBtn.Text = "Тема меню: Красный"
+    elseif themeMode == "Красный" then
+        themeMode = "Зеленый"
+        Header.BackgroundColor3 = Color3.fromRGB(30, 130, 30)
+        themeBtn.Text = "Тема меню: Зеленый"
+    elseif themeMode == "Зеленый" then
+        themeMode = "Синий"
+        Header.BackgroundColor3 = Color3.fromRGB(30, 50, 150)
+        themeBtn.Text = "Тема меню: Синий"
+    elseif themeMode == "Синий" then
+        themeMode = "RGB"
+        themeBtn.Text = "Тема меню: RGB"
+    else
+        themeMode = "Стандарт"
+        Header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        themeBtn.Text = "Тема меню: Стандарт"
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if themeMode == "RGB" then
+        local tickColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        Header.BackgroundColor3 = tickColor
+    end
+    
+    if crosshairEnabled then
+        if themeMode == "RGB" then
+            local rgbCol = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+            CHLine1.BackgroundColor3 = rgbCol
+            CHLine2.BackgroundColor3 = rgbCol
+        elseif themeMode == "Красный" then
+            CHLine1.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+            CHLine2.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        elseif themeMode == "Зеленый" then
+            CHLine1.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+            CHLine2.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+        elseif themeMode == "Синий" then
+            CHLine1.BackgroundColor3 = Color3.fromRGB(50, 100, 255)
+            CHLine2.BackgroundColor3 = Color3.fromRGB(50, 100, 255)
+        else
+            CHLine1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            CHLine2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         end
     end
-    return nil
-end
+end)
 
 -- =============================================
--- ФУНКЦИИ ШЕРИФА
+-- ВКЛАДКА: ШЕРИФ
 -- =============================================
-CreateSection("ФУНКЦИИ ШЕРИФА")
-
 local sherAimbot = false
-CreateToggle("Автонаводка на Киллера", function(val) sherAimbot = val end)
+CreateToggle(PageSheriff, "Автонаводка на Киллера", function(val) sherAimbot = val end)
 
 RunService.RenderStepped:Connect(function()
     if sherAimbot then
@@ -168,7 +339,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 local wallbang = false
-CreateToggle("Прострел стен (Шериф/Стрельба)", function(val) wallbang = val end)
+CreateToggle(PageSheriff, "Прострел стен (Стрельба)", function(val) wallbang = val end)
 
 pcall(function()
     local mt = getrawmetatable(game)
@@ -194,12 +365,25 @@ pcall(function()
     setreadonly(mt, true)
 end)
 
--- =============================================
--- ФУНКЦИИ КИЛЛЕРА
--- =============================================
-CreateSection("ФУНКЦИИ КИЛЛЕРА")
+-- Крашер перенесён сюда в Шериф / Разное
+CreateToggle(PageSheriff, "Crasher (Краш сервера)", function(val)
+    if val then
+        task.spawn(function()
+            while val and task.wait(0.1) do
+                pcall(function()
+                    for i = 1, 50 do
+                        game:GetService("ReplicatedStorage"):FireServer()
+                    end
+                end)
+            end
+        end)
+    end
+end)
 
-CreateToggle("Убить всех (Авто-телепорт)", function(val)
+-- =============================================
+-- ВКЛАДКА: КИЛЛЕР
+-- =============================================
+CreateToggle(PageKiller, "Убить всех (Авто-телепорт)", function(val)
     if val then
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -219,7 +403,7 @@ CreateToggle("Убить всех (Авто-телепорт)", function(val)
 end)
 
 local silentKill = false
-CreateToggle("Тихий килл (Аура ножа)", function(val) silentKill = val end)
+CreateToggle(PageKiller, "Тихий килл (Аура ножа)", function(val) silentKill = val end)
 
 RunService.RenderStepped:Connect(function()
     if silentKill then
@@ -240,12 +424,32 @@ RunService.RenderStepped:Connect(function()
 end)
 
 -- =============================================
--- ОБЩИЕ ФУНКЦИИ
+-- ВКЛАДКА: ГЛАВНАЯ (Общие читы)
 -- =============================================
-CreateSection("ОБЩИЕ ФУНКЦИИ")
+local generalAimbot = false
+CreateToggle(PageGeneral, "Автонаводка (Общая)", function(val) generalAimbot = val end)
+
+RunService.RenderStepped:Connect(function()
+    if generalAimbot then
+        local closestTarget = nil
+        local shortestDist = math.huge
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                local dist = (p.Character.Head.Position - Camera.CFrame.Position).Magnitude
+                if dist < shortestDist then
+                    shortestDist = dist
+                    closestTarget = p.Character.Head
+                end
+            end
+        end
+        if closestTarget then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, closestTarget.Position)
+        end
+    end
+end)
 
 local speed = false
-CreateToggle("SpeedHack (SP)", function(val) speed = val end)
+CreateToggle(PageGeneral, "SpeedHack (SP)", function(val) speed = val end)
 
 RunService.Stepped:Connect(function()
     if speed and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
@@ -257,7 +461,7 @@ RunService.Stepped:Connect(function()
 end)
 
 local noclip = false
-CreateToggle("Noclip (Сквозь стены)", function(val) noclip = val end)
+CreateToggle(PageGeneral, "Noclip (Сквозь стены)", function(val) noclip = val end)
 
 RunService.Stepped:Connect(function()
     if noclip and LocalPlayer.Character then
@@ -269,8 +473,38 @@ RunService.Stepped:Connect(function()
     end
 end)
 
+-- =============================================
+-- ВКЛАДКА: ВИЗУАЛ
+-- =============================================
+local espEnabled = false
+CreateToggle(PageVisual, "ESP (Подсветка ролей)", function(val) espEnabled = val end)
+
+RunService.RenderStepped:Connect(function()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local highlight = p.Character:FindFirstChild("QuuuaESP")
+            if espEnabled then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "QuuuaESP"
+                    highlight.Parent = p.Character
+                end
+                if p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife") then
+                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                elseif p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
+                    highlight.FillColor = Color3.fromRGB(0, 0, 255)
+                else
+                    highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                end
+            else
+                if highlight then highlight:Destroy() end
+            end
+        end
+    end
+end)
+
 local bigHead = false
-CreateToggle("BigHead (Большие головы)", function(val) bigHead = val end)
+CreateToggle(PageVisual, "BigHead (Большие головы)", function(val) bigHead = val end)
 
 RunService.RenderStepped:Connect(function()
     if bigHead then
@@ -285,7 +519,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 local fullbright = false
-CreateToggle("Fullbright (Яркий свет)", function(val)
+CreateToggle(PageVisual, "Fullbright (Яркий свет)", function(val)
     fullbright = val
     Lighting.Brightness = val and 2 or 1
     Lighting.ClockTime = val and 14 or 12
@@ -314,8 +548,8 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local mousePos = input.Position
-        local newWidth = math.max(220, mousePos.X - MainFrame.AbsolutePosition.X)
-        local newHeight = math.max(200, mousePos.Y - MainFrame.AbsolutePosition.Y)
+        local newWidth = math.max(260, mousePos.X - MainFrame.AbsolutePosition.X)
+        local newHeight = math.max(220, mousePos.Y - MainFrame.AbsolutePosition.Y)
         MainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
     end
 end)
