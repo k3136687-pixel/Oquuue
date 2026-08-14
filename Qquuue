@@ -1,20 +1,22 @@
 -- =============================================
 -- Script Name: Quuua Hub | MM2 Ultimate Edition
 -- TikTok: @symashedshi73
+-- Designer UI & Wide Touch Layout (Rounded Edition)
 -- =============================================
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- GUI Setup
+-- GUI Container Setup
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "QuuuaHub"
+ScreenGui.Name = "QuuuaHub_v2"
 ScreenGui.ResetOnSpawn = false
 
 if gethui then
@@ -26,63 +28,286 @@ else
     ScreenGui.Parent = game:GetService("CoreGui")
 end
 
--- Main Window
+-- =============================================
+-- СИСТЕМА УПРАВЛЕНИЯ ТЕМАМИ (ДИЗАЙНЕРСКИЙ СТИЛЬ)
+-- =============================================
+
+local UI_Registry = {
+    MainFrames = {},  -- Главные фоновые блоки
+    Headers = {},     -- Шапки и верхние панели
+    Buttons = {},     -- Кнопки
+    Strokes = {},     -- Обводки / Рамки
+    Accents = {},     -- Акцентные тексты
+    Texts = {},       -- Обычные тексты
+    Toggles = {}      -- Переключатели
+}
+
+local Themes = {
+    ["Оранжевый"] = {
+        Bg = Color3.fromRGB(18, 18, 22),
+        Header = Color3.fromRGB(24, 24, 30),
+        Button = Color3.fromRGB(32, 32, 40),
+        Accent = Color3.fromRGB(255, 140, 0),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    ["Красный"] = {
+        Bg = Color3.fromRGB(22, 14, 14),
+        Header = Color3.fromRGB(30, 18, 18),
+        Button = Color3.fromRGB(38, 26, 26),
+        Accent = Color3.fromRGB(240, 60, 60),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    ["Зеленый"] = {
+        Bg = Color3.fromRGB(14, 22, 16),
+        Header = Color3.fromRGB(18, 30, 22),
+        Button = Color3.fromRGB(26, 38, 30),
+        Accent = Color3.fromRGB(50, 215, 110),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    ["Синий"] = {
+        Bg = Color3.fromRGB(14, 18, 24),
+        Header = Color3.fromRGB(18, 24, 34),
+        Button = Color3.fromRGB(26, 34, 46),
+        Accent = Color3.fromRGB(60, 150, 255),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    ["Фиолетовый"] = {
+        Bg = Color3.fromRGB(20, 14, 24),
+        Header = Color3.fromRGB(26, 18, 32),
+        Button = Color3.fromRGB(36, 26, 44),
+        Accent = Color3.fromRGB(175, 70, 255),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    ["Монохром"] = {
+        Bg = Color3.fromRGB(14, 14, 14),
+        Header = Color3.fromRGB(22, 22, 22),
+        Button = Color3.fromRGB(30, 30, 30),
+        Accent = Color3.fromRGB(220, 220, 220),
+        Text = Color3.fromRGB(255, 255, 255)
+    }
+}
+
+local currentAccent = Themes["Оранжевый"].Accent
+local isRGBMode = false
+
+local ButtonStyle = {
+    Bg = Color3.fromRGB(30, 32, 38),
+    Text = Color3.fromRGB(240, 240, 245)
+}
+
+local function ApplyThemeData(data)
+    currentAccent = data.Accent
+    for _, obj in ipairs(UI_Registry.MainFrames) do obj.BackgroundColor3 = data.Bg end
+    for _, obj in ipairs(UI_Registry.Headers) do obj.BackgroundColor3 = data.Header end
+    for _, obj in ipairs(UI_Registry.Strokes) do obj.Color = data.Accent end
+    for _, obj in ipairs(UI_Registry.Accents) do obj.TextColor3 = data.Accent end
+    for _, obj in ipairs(UI_Registry.Texts) do obj.TextColor3 = data.Text end
+    
+    for _, obj in ipairs(UI_Registry.Buttons) do 
+        obj.BackgroundColor3 = ButtonStyle.Bg 
+        obj.TextColor3 = ButtonStyle.Text
+    end
+
+    for _, toggle in ipairs(UI_Registry.Toggles) do
+        if toggle.Active then
+            toggle.StatusBox.BackgroundColor3 = data.Accent
+        end
+    end
+end
+
+local function SetTheme(themeName)
+    if themeName == "RGB" then
+        isRGBMode = true
+    else
+        isRGBMode = false
+        if Themes[themeName] then
+            ApplyThemeData(Themes[themeName])
+        end
+    end
+end
+
+-- =============================================
+-- ЭКРАН ЗАГРУЗКИ (LOADING SCREEN)
+-- =============================================
+
+local LoadingFrame = Instance.new("Frame")
+LoadingFrame.Name = "LoadingFrame"
+LoadingFrame.Size = UDim2.new(0, 320, 0, 180)
+LoadingFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
+LoadingFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+LoadingFrame.BorderSizePixel = 0
+LoadingFrame.ClipsDescendants = true
+LoadingFrame.Parent = ScreenGui
+
+local LoadingCorner = Instance.new("UICorner")
+LoadingCorner.CornerRadius = UDim.new(0, 16)
+LoadingCorner.Parent = LoadingFrame
+
+local LoadingStroke = Instance.new("UIStroke")
+LoadingStroke.Color = Themes["Оранжевый"].Accent
+LoadingStroke.Thickness = 1.5
+LoadingStroke.Parent = LoadingFrame
+
+local LoadTitle = Instance.new("TextLabel")
+LoadTitle.Size = UDim2.new(1, 0, 0, 30)
+LoadTitle.Position = UDim2.new(0, 0, 0, 20)
+LoadTitle.BackgroundTransparency = 1
+LoadTitle.Text = "⚡ QUUUA HUB"
+LoadTitle.TextColor3 = Themes["Оранжевый"].Accent
+LoadTitle.TextSize = 18
+LoadTitle.Font = Enum.Font.GothamBold
+LoadTitle.Parent = LoadingFrame
+
+local LoadUser = Instance.new("TextLabel")
+LoadUser.Size = UDim2.new(1, -20, 0, 20)
+LoadUser.Position = UDim2.new(0, 10, 0, 52)
+LoadUser.BackgroundTransparency = 1
+LoadUser.Text = "Пользователь: " .. (LocalPlayer.DisplayName or LocalPlayer.Name)
+LoadUser.TextColor3 = Color3.fromRGB(200, 200, 200)
+LoadUser.TextSize = 13
+LoadUser.Font = Enum.Font.GothamMedium
+LoadUser.Parent = LoadingFrame
+
+local LoadStatus = Instance.new("TextLabel")
+LoadStatus.Size = UDim2.new(1, 0, 0, 20)
+LoadStatus.Position = UDim2.new(0, 0, 0, 95)
+LoadStatus.BackgroundTransparency = 1
+LoadStatus.Text = "Загрузка..."
+LoadStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadStatus.TextSize = 12
+LoadStatus.Font = Enum.Font.Gotham
+LoadStatus.Parent = LoadingFrame
+
+local ProgressBarBg = Instance.new("Frame")
+ProgressBarBg.Size = UDim2.new(0.8, 0, 0, 6)
+ProgressBarBg.Position = UDim2.new(0.1, 0, 0, 125)
+ProgressBarBg.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
+ProgressBarBg.BorderSizePixel = 0
+ProgressBarBg.Parent = LoadingFrame
+Instance.new("UICorner", ProgressBarBg).CornerRadius = UDim.new(1, 0)
+
+local ProgressBarFill = Instance.new("Frame")
+ProgressBarFill.Size = UDim2.new(0, 0, 1, 0)
+ProgressBarFill.BackgroundColor3 = Themes["Оранжевый"].Accent
+ProgressBarFill.BorderSizePixel = 0
+ProgressBarFill.Parent = ProgressBarBg
+Instance.new("UICorner", ProgressBarFill).CornerRadius = UDim.new(1, 0)
+
+-- =============================================
+-- ГЛАВНОЕ ОКНО (ЗАКРУГЛЕННЫЙ ДИЗАЙН)
+-- =============================================
+
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 300, 0, 420)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Size = UDim2.new(0, 380, 0, 360)
+MainFrame.Position = UDim2.new(0.5, -190, 0.5, -180)
+MainFrame.BackgroundColor3 = Themes["Оранжевый"].Bg
 MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
 MainFrame.ClipsDescendants = true
+MainFrame.Visible = false -- Скрыто до конца загрузки
 MainFrame.Parent = ScreenGui
+table.insert(UI_Registry.MainFrames, MainFrame)
 
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+local MainUICorner = Instance.new("UICorner")
+MainUICorner.CornerRadius = UDim.new(0, 16) -- Красивые закруглённые углы
+MainUICorner.Parent = MainFrame
+
+local MainUIStroke = Instance.new("UIStroke")
+MainUIStroke.Color = Themes["Оранжевый"].Accent
+MainUIStroke.Thickness = 1.5
+MainUIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainUIStroke.Parent = MainFrame
+table.insert(UI_Registry.Strokes, MainUIStroke)
+
+-- Перетаскивание меню
+local dragging, dragInput, dragStart, startPos
+local function updateDrag(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        updateDrag(input)
+    end
+end)
 
 -- Header
 local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1, 0, 0, 35)
-Header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Header.Size = UDim2.new(1, 0, 0, 42)
+Header.BackgroundColor3 = Themes["Оранжевый"].Header
 Header.BorderSizePixel = 0
 Header.Parent = MainFrame
+table.insert(UI_Registry.Headers, Header)
+
+local HeaderCorner = Instance.new("UICorner")
+HeaderCorner.CornerRadius = UDim.new(0, 16)
+HeaderCorner.Parent = Header
 
 local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -65, 1, 0)
-TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.Size = UDim2.new(1, -70, 1, 0)
+TitleText.Position = UDim2.new(0, 14, 0, 0)
 TitleText.BackgroundTransparency = 1
 TitleText.Text = "Quuua Hub | MM2"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.TextSize = 15
-TitleText.Font = Enum.Font.SourceSansBold
+TitleText.Font = Enum.Font.GothamBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = Header
+table.insert(UI_Registry.Texts, TitleText)
 
--- Mini Bar (Свернутая версия)
+-- Mini Bar
 local MiniBar = Instance.new("TextButton")
-MiniBar.Size = UDim2.new(0, 180, 0, 32)
-MiniBar.Position = UDim2.new(0.5, -90, 0.1, 0)
-MiniBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MiniBar.Text = "Quuua Hub | @symashedshi73"
-MiniBar.TextColor3 = Color3.fromRGB(255, 170, 0)
+MiniBar.Size = UDim2.new(0, 220, 0, 38)
+MiniBar.Position = UDim2.new(0.5, -110, 0.05, 0)
+MiniBar.BackgroundColor3 = Themes["Оранжевый"].Bg
+MiniBar.Text = "⚡ Quuua Hub | @symashedshi73"
+MiniBar.TextColor3 = Themes["Оранжевый"].Accent
 MiniBar.TextSize = 12
-MiniBar.Font = Enum.Font.SourceSansBold
+MiniBar.Font = Enum.Font.GothamBold
 MiniBar.Visible = false
 MiniBar.Active = true
 MiniBar.Draggable = true
 MiniBar.Parent = ScreenGui
-Instance.new("UICorner", MiniBar).CornerRadius = UDim.new(0, 8)
+table.insert(UI_Registry.MainFrames, MiniBar)
+table.insert(UI_Registry.Accents, MiniBar)
 
--- Minimize Button (-)
+Instance.new("UICorner", MiniBar).CornerRadius = UDim.new(0, 10)
+local MiniStroke = Instance.new("UIStroke", MiniBar)
+MiniStroke.Color = Themes["Оранжевый"].Accent
+MiniStroke.Thickness = 1.5
+table.insert(UI_Registry.Strokes, MiniStroke)
+
+-- Кнопки сворачивания и закрытия
 local MinBtn = Instance.new("TextButton")
 MinBtn.Size = UDim2.new(0, 26, 0, 26)
-MinBtn.Position = UDim2.new(1, -60, 0, 4)
-MinBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+MinBtn.Position = UDim2.new(1, -62, 0, 8)
+MinBtn.BackgroundColor3 = ButtonStyle.Bg
 MinBtn.Text = "-"
 MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinBtn.TextSize, MinBtn.Font = 14, Enum.Font.SourceSansBold
+MinBtn.TextSize = 16
+MinBtn.Font = Enum.Font.GothamBold
 MinBtn.Parent = Header
-Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 8)
 
 MinBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
@@ -94,130 +319,100 @@ MiniBar.MouseButton1Click:Connect(function()
     MiniBar.Visible = false
 end)
 
--- Close Button (X)
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 26, 0, 26)
-CloseBtn.Position = UDim2.new(1, -30, 0, 4)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseBtn.Text = "X"
+CloseBtn.Position = UDim2.new(1, -32, 0, 8)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(215, 55, 55)
+CloseBtn.Text = "✕"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextSize, CloseBtn.Font = 13, Enum.Font.SourceSansBold
+CloseBtn.TextSize = 13
+CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.Parent = Header
-Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 8)
 
 CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Tab System (Панель вкладок)
-local TabBar = Instance.new("Frame")
-TabBar.Size = UDim2.new(1, 0, 0, 30)
-TabBar.Position = UDim2.new(0, 0, 0, 35)
-TabBar.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
-TabBar.BorderSizePixel = 0
-TabBar.Parent = MainFrame
+-- Container
+local Container = Instance.new("ScrollingFrame")
+Container.Size = UDim2.new(1, -12, 1, -52)
+Container.Position = UDim2.new(0, 6, 0, 46)
+Container.BackgroundTransparency = 1
+Container.BorderSizePixel = 0
+Container.ScrollBarThickness = 4
+Container.ScrollBarImageColor3 = Themes["Оранжевый"].Accent
+Container.Parent = MainFrame
 
-local TabListLayout = Instance.new("UIListLayout")
-TabListLayout.FillDirection = Enum.FillDirection.Horizontal
-TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TabListLayout.Parent = TabBar
+local UIList = Instance.new("UIListLayout")
+UIList.Padding = UDim.new(0, 6)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+UIList.Parent = Container
 
-local PagesFolder = Instance.new("Folder")
-PagesFolder.Name = "PagesFolder"
-PagesFolder.Parent = MainFrame
+UIList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Container.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y + 12)
+end)
 
--- Контейнер для страниц
-local PagesContainer = Instance.new("Frame")
-PagesContainer.Size = UDim2.new(1, -10, 1, -75)
-PagesContainer.Position = UDim2.new(0, 5, 0, 70)
-PagesContainer.BackgroundTransparency = 1
-PagesContainer.Parent = MainFrame
+-- Helpers
+local function CreateSection(text)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 0, 22)
+    frame.BackgroundTransparency = 1
+    frame.Parent = Container
 
-local pages = {}
-local tabButtons = {}
-local activeTab = nil
-
-local function CreatePage(name)
-    local scroller = Instance.new("ScrollingFrame")
-    scroller.Size = UDim2.new(1, 0, 1, 0)
-    scroller.BackgroundTransparency = 1
-    scroller.BorderSizePixel = 0
-    scroller.ScrollBarThickness = 4
-    scroller.Visible = false
-    scroller.Parent = PagesContainer
-
-    local uiList = Instance.new("UIListLayout")
-    uiList.Padding = UDim.new(0, 6)
-    uiList.SortOrder = Enum.SortOrder.LayoutOrder
-    uiList.Parent = scroller
-
-    uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        scroller.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
-    end)
-
-    pages[name] = scroller
-
-    -- Кнопка вкладки сверху
-    local tBtn = Instance.new("TextButton")
-    tBtn.Size = UDim2.new(0, 55, 1, 0)
-    tBtn.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
-    tBtn.BorderSizePixel = 0
-    tBtn.Text = name
-    tBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
-    tBtn.TextSize = 11
-    tBtn.Font = Enum.Font.SourceSansBold
-    tBtn.Parent = TabBar
-
-    tBtn.MouseButton1Click:Connect(function()
-        for pName, page in pairs(pages) do
-            page.Visible = (pName == name)
-        end
-        for _, btn in pairs(tabButtons) do
-            btn.TextColor3 = Color3.fromRGB(180, 180, 180)
-            btn.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
-        end
-        tBtn.TextColor3 = Color3.fromRGB(255, 170, 0)
-        tBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    end)
-
-    tabButtons[name] = tBtn
-    if not activeTab then
-        activeTab = name
-        scroller.Visible = true
-        tBtn.TextColor3 = Color3.fromRGB(255, 170, 0)
-        tBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    end
-
-    return scroller
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(1, 0, 1, 0)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = text
+    lbl.TextColor3 = Themes["Оранжевый"].Accent
+    lbl.TextSize = 11
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Parent = frame
+    table.insert(UI_Registry.Accents, lbl)
 end
 
--- Создаем вкладки
-local PageGeneral = CreatePage("Главная")
-local PageSheriff = CreatePage("Шериф")
-local PageKiller = CreatePage("Киллер")
-local PageVisual = CreatePage("Визуал")
-local PageSettings = CreatePage("Настройки")
-
--- Хелперы
-local function CreateToggle(targetPage, name, callback)
+local function CreateToggle(name, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -4, 0, 30)
-    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    btn.Text = name .. ": ВЫКЛ"
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Size = UDim2.new(1, -4, 0, 34)
+    btn.BackgroundColor3 = ButtonStyle.Bg
+    btn.Text = "  " .. name
+    btn.TextColor3 = ButtonStyle.Text
     btn.TextSize = 12
-    btn.Font = Enum.Font.SourceSansBold
-    btn.Parent = targetPage
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.Parent = Container
 
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    table.insert(UI_Registry.Buttons, btn)
 
-    local active = false
+    local statusBox = Instance.new("TextLabel")
+    statusBox.Size = UDim2.new(0, 42, 0, 20)
+    statusBox.Position = UDim2.new(1, -47, 0.5, -10)
+    statusBox.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
+    statusBox.Text = "OFF"
+    statusBox.TextColor3 = Color3.fromRGB(140, 140, 150)
+    statusBox.TextSize = 10
+    statusBox.Font = Enum.Font.GothamBold
+    statusBox.Parent = btn
+
+    Instance.new("UICorner", statusBox).CornerRadius = UDim.new(0, 6)
+
+    local toggleData = { Active = false, StatusBox = statusBox }
+    table.insert(UI_Registry.Toggles, toggleData)
+
     btn.MouseButton1Click:Connect(function()
-        active = not active
-        btn.BackgroundColor3 = active and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(50, 50, 50)
-        btn.Text = active and (name .. ": ВКЛ") or (name .. ": ВЫКЛ")
-        callback(active)
+        toggleData.Active = not toggleData.Active
+        if toggleData.Active then
+            statusBox.Text = "ON"
+            statusBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+            statusBox.BackgroundColor3 = currentAccent
+        else
+            statusBox.Text = "OFF"
+            statusBox.TextColor3 = Color3.fromRGB(140, 140, 150)
+            statusBox.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
+        end
+        callback(toggleData.Active)
     end)
     return btn
 end
@@ -235,8 +430,37 @@ local function GetMurderer()
 end
 
 -- =============================================
--- ВКЛАДКА: НАСТРОЙКИ (Тема и Кроссхайр)
+-- ВИЗУАЛ ТА КАСТОМІЗАЦІЯ
 -- =============================================
+CreateSection("✦ НАСТРОЙКА ЦВЕТА И ТЕМЫ")
+
+local themeList = {"Оранжевый", "Красный", "Зеленый", "Синий", "Фиолетовый", "Монохром", "RGB"}
+local themeIndex = 1
+
+local ThemeSelectBtn = Instance.new("TextButton")
+ThemeSelectBtn.Size = UDim2.new(1, -4, 0, 34)
+ThemeSelectBtn.BackgroundColor3 = ButtonStyle.Bg
+ThemeSelectBtn.Text = "  🎨 Тема меню: Оранжевый"
+ThemeSelectBtn.TextColor3 = ButtonStyle.Text
+ThemeSelectBtn.TextSize = 12
+ThemeSelectBtn.Font = Enum.Font.GothamMedium
+ThemeSelectBtn.TextXAlignment = Enum.TextXAlignment.Left
+ThemeSelectBtn.Parent = Container
+
+Instance.new("UICorner", ThemeSelectBtn).CornerRadius = UDim.new(0, 8)
+table.insert(UI_Registry.Buttons, ThemeSelectBtn)
+
+ThemeSelectBtn.MouseButton1Click:Connect(function()
+    themeIndex = themeIndex + 1
+    if themeIndex > #themeList then themeIndex = 1 end
+    
+    local selected = themeList[themeIndex]
+    ThemeSelectBtn.Text = "  🎨 Тема меню: " .. selected
+    SetTheme(selected)
+end)
+
+CreateSection("✦ КАСТОМІЗАЦІЯ І ВИЗУАЛ")
+
 local CrosshairGui = Instance.new("Folder")
 CrosshairGui.Name = "CustomCrosshair"
 CrosshairGui.Parent = ScreenGui
@@ -256,78 +480,42 @@ CHLine2.BorderSizePixel = 0
 CHLine2.Visible = false
 
 local crosshairEnabled = false
-CreateToggle(PageSettings, "Кастомный прицел", function(val)
+CreateToggle("Кастомный прицел", function(val)
     crosshairEnabled = val
     CHLine1.Visible = val
     CHLine2.Visible = val
 end)
 
-local themeMode = "Стандарт"
-local themeBtn = Instance.new("TextButton")
-themeBtn.Size = UDim2.new(1, -4, 0, 30)
-themeBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-themeBtn.Text = "Тема меню: Стандарт"
-themeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-themeBtn.TextSize = 12
-themeBtn.Font = Enum.Font.SourceSansBold
-themeBtn.Parent = PageSettings
-Instance.new("UICorner", themeBtn).CornerRadius = UDim.new(0, 6)
-
-themeBtn.MouseButton1Click:Connect(function()
-    if themeMode == "Стандарт" then
-        themeMode = "Красный"
-        Header.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
-        themeBtn.Text = "Тема меню: Красный"
-    elseif themeMode == "Красный" then
-        themeMode = "Зеленый"
-        Header.BackgroundColor3 = Color3.fromRGB(30, 130, 30)
-        themeBtn.Text = "Тема меню: Зеленый"
-    elseif themeMode == "Зеленый" then
-        themeMode = "Синий"
-        Header.BackgroundColor3 = Color3.fromRGB(30, 50, 150)
-        themeBtn.Text = "Тема меню: Синий"
-    elseif themeMode == "Синий" then
-        themeMode = "RGB"
-        themeBtn.Text = "Тема меню: RGB"
-    else
-        themeMode = "Стандарт"
-        Header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-        themeBtn.Text = "Тема меню: Стандарт"
-    end
-end)
-
 RunService.RenderStepped:Connect(function()
-    if themeMode == "RGB" then
-        local tickColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-        Header.BackgroundColor3 = tickColor
+    if isRGBMode then
+        local hue = (tick() % 4) / 4
+        local rgbAccent = Color3.fromHSV(hue, 0.85, 1)
+        local rgbBg = Color3.fromHSV(hue, 0.45, 0.12)
+        local rgbHeader = Color3.fromHSV(hue, 0.45, 0.18)
+
+        ApplyThemeData({
+            Bg = rgbBg,
+            Header = rgbHeader,
+            Accent = rgbAccent,
+            Text = Color3.fromRGB(255, 255, 255)
+        })
     end
     
+    Container.ScrollBarImageColor3 = currentAccent
+
     if crosshairEnabled then
-        if themeMode == "RGB" then
-            local rgbCol = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-            CHLine1.BackgroundColor3 = rgbCol
-            CHLine2.BackgroundColor3 = rgbCol
-        elseif themeMode == "Красный" then
-            CHLine1.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-            CHLine2.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        elseif themeMode == "Зеленый" then
-            CHLine1.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-            CHLine2.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        elseif themeMode == "Синий" then
-            CHLine1.BackgroundColor3 = Color3.fromRGB(50, 100, 255)
-            CHLine2.BackgroundColor3 = Color3.fromRGB(50, 100, 255)
-        else
-            CHLine1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            CHLine2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        end
+        CHLine1.BackgroundColor3 = currentAccent
+        CHLine2.BackgroundColor3 = currentAccent
     end
 end)
 
 -- =============================================
--- ВКЛАДКА: ШЕРИФ
+-- ФУНКЦІЇ ШЕРИФА
 -- =============================================
+CreateSection("✦ ФУНКЦІЇ ШЕРИФА")
+
 local sherAimbot = false
-CreateToggle(PageSheriff, "Автонаводка на Киллера", function(val) sherAimbot = val end)
+CreateToggle("Автонаводка на Киллера", function(val) sherAimbot = val end)
 
 RunService.RenderStepped:Connect(function()
     if sherAimbot then
@@ -339,7 +527,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 local wallbang = false
-CreateToggle(PageSheriff, "Прострел стен (Стрельба)", function(val) wallbang = val end)
+CreateToggle("Прострел стен (Wallbang)", function(val) wallbang = val end)
 
 pcall(function()
     local mt = getrawmetatable(game)
@@ -365,25 +553,12 @@ pcall(function()
     setreadonly(mt, true)
 end)
 
--- Крашер перенесён сюда в Шериф / Разное
-CreateToggle(PageSheriff, "Crasher (Краш сервера)", function(val)
-    if val then
-        task.spawn(function()
-            while val and task.wait(0.1) do
-                pcall(function()
-                    for i = 1, 50 do
-                        game:GetService("ReplicatedStorage"):FireServer()
-                    end
-                end)
-            end
-        end)
-    end
-end)
+-- =============================================
+-- ФУНКЦІЇ КИЛЛЕРА
+-- =============================================
+CreateSection("✦ ФУНКЦІЇ КИЛЛЕРА")
 
--- =============================================
--- ВКЛАДКА: КИЛЛЕР
--- =============================================
-CreateToggle(PageKiller, "Убить всех (Авто-телепорт)", function(val)
+CreateToggle("Убить всех (Авто-телепорт)", function(val)
     if val then
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -403,7 +578,7 @@ CreateToggle(PageKiller, "Убить всех (Авто-телепорт)", func
 end)
 
 local silentKill = false
-CreateToggle(PageKiller, "Тихий килл (Аура ножа)", function(val) silentKill = val end)
+CreateToggle("Тихий килл (Аура ножа)", function(val) silentKill = val end)
 
 RunService.RenderStepped:Connect(function()
     if silentKill then
@@ -412,144 +587,4 @@ RunService.RenderStepped:Connect(function()
             local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
             knife.Parent = char
             for _, p in pairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    local hrp = p.Character.HumanoidRootPart
-                    if (char.HumanoidRootPart.Position - hrp.Position).Magnitude < 15 then
-                        knife:Activate()
-                    end
-                end
-            end
-        end
-    end
-end)
-
--- =============================================
--- ВКЛАДКА: ГЛАВНАЯ (Общие читы)
--- =============================================
-local generalAimbot = false
-CreateToggle(PageGeneral, "Автонаводка (Общая)", function(val) generalAimbot = val end)
-
-RunService.RenderStepped:Connect(function()
-    if generalAimbot then
-        local closestTarget = nil
-        local shortestDist = math.huge
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
-                local dist = (p.Character.Head.Position - Camera.CFrame.Position).Magnitude
-                if dist < shortestDist then
-                    shortestDist = dist
-                    closestTarget = p.Character.Head
-                end
-            end
-        end
-        if closestTarget then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, closestTarget.Position)
-        end
-    end
-end)
-
-local speed = false
-CreateToggle(PageGeneral, "SpeedHack (SP)", function(val) speed = val end)
-
-RunService.Stepped:Connect(function()
-    if speed and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-        local hum = LocalPlayer.Character.Humanoid
-        if hum.MoveDirection.Magnitude > 0 then
-            LocalPlayer.Character:TranslateBy(hum.MoveDirection * 0.9)
-        end
-    end
-end)
-
-local noclip = false
-CreateToggle(PageGeneral, "Noclip (Сквозь стены)", function(val) noclip = val end)
-
-RunService.Stepped:Connect(function()
-    if noclip and LocalPlayer.Character then
-        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                part.CanCollide = false
-            end
-        end
-    end
-end)
-
--- =============================================
--- ВКЛАДКА: ВИЗУАЛ
--- =============================================
-local espEnabled = false
-CreateToggle(PageVisual, "ESP (Подсветка ролей)", function(val) espEnabled = val end)
-
-RunService.RenderStepped:Connect(function()
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character then
-            local highlight = p.Character:FindFirstChild("QuuuaESP")
-            if espEnabled then
-                if not highlight then
-                    highlight = Instance.new("Highlight")
-                    highlight.Name = "QuuuaESP"
-                    highlight.Parent = p.Character
-                end
-                if p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife") then
-                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                elseif p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
-                    highlight.FillColor = Color3.fromRGB(0, 0, 255)
-                else
-                    highlight.FillColor = Color3.fromRGB(0, 255, 0)
-                end
-            else
-                if highlight then highlight:Destroy() end
-            end
-        end
-    end
-end)
-
-local bigHead = false
-CreateToggle(PageVisual, "BigHead (Большие головы)", function(val) bigHead = val end)
-
-RunService.RenderStepped:Connect(function()
-    if bigHead then
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
-                local head = p.Character.Head
-                head.Size = Vector3.new(4, 4, 4)
-                head.CanCollide = false
-            end
-        end
-    end
-end)
-
-local fullbright = false
-CreateToggle(PageVisual, "Fullbright (Яркий свет)", function(val)
-    fullbright = val
-    Lighting.Brightness = val and 2 or 1
-    Lighting.ClockTime = val and 14 or 12
-    Lighting.GlobalShadows = not val
-end)
-
--- =============================================
--- RESIZE HANDLE
--- =============================================
-local ResizeHandle = Instance.new("TextButton")
-ResizeHandle.Size = UDim2.new(0, 16, 0, 16)
-ResizeHandle.Position = UDim2.new(1, -16, 1, -18)
-ResizeHandle.BackgroundTransparency = 1
-ResizeHandle.Text = "◢"
-ResizeHandle.TextColor3 = Color3.fromRGB(200, 200, 200)
-ResizeHandle.TextSize = 12
-ResizeHandle.Parent = MainFrame
-
-local isResizing = false
-ResizeHandle.MouseButton1Down:Connect(function() isResizing = true end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isResizing = false
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local mousePos = input.Position
-        local newWidth = math.max(260, mousePos.X - MainFrame.AbsolutePosition.X)
-        local newHeight = math.max(220, mousePos.Y - MainFrame.AbsolutePosition.Y)
-        MainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
-    end
-end)
+                if p ~= LocalPlaye
