@@ -587,4 +587,130 @@ RunService.RenderStepped:Connect(function()
             local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
             knife.Parent = char
             for _, p in pairs(Players:GetPlayers()) do
-                if p ~= LocalPlaye
+                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
+                    if knife then
+                        knife.Parent = char
+                        char.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
+                        task.wait(0.04)
+                        knife:Activate()
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local silentKill = false
+CreateToggle("Тихий килл (Аура ножа)", function(val) silentKill = val end)
+
+RunService.RenderStepped:Connect(function()
+    if silentKill then
+        local char = LocalPlayer.Character
+        if char and (char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")) then
+            local knife = char:FindFirstChild("Knife") or LocalPlayer.Backpack:FindFirstChild("Knife")
+            knife.Parent = char
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = p.Character.HumanoidRootPart
+                    if (char.HumanoidRootPart.Position - hrp.Position).Magnitude < 15 then
+                        knife:Activate()
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- =============================================
+-- ОБЩИЕ ФУНКЦИИ
+-- =============================================
+CreateSection("✦ ОБЩИЕ ФУНКЦИИ")
+
+local generalAimbot = false
+CreateToggle("Общий Aimbot", function(val) generalAimbot = val end)
+
+RunService.RenderStepped:Connect(function()
+    if generalAimbot then
+        local closestTarget = nil
+        local shortestDist = math.huge
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                local dist = (p.Character.Head.Position - Camera.CFrame.Position).Magnitude
+                if dist < shortestDist then
+                    shortestDist = dist
+                    closestTarget = p.Character.Head
+                end
+            end
+        end
+        if closestTarget then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, closestTarget.Position)
+        end
+    end
+end)
+
+local espEnabled = false
+CreateToggle("ESP (Подсветка игроков)", function(val)
+    espEnabled = val
+end)
+
+RunService.RenderStepped:Connect(function()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local highlight = p.Character:FindFirstChild("QuuuaESP")
+            if espEnabled then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "QuuuaESP"
+                    highlight.Parent = p.Character
+                end
+                if p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife") then
+                    highlight.FillColor = Color3.fromRGB(255, 40, 40)
+                elseif p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
+                    highlight.FillColor = Color3.fromRGB(40, 100, 255)
+                else
+                    highlight.FillColor = Color3.fromRGB(40, 255, 100)
+                end
+            else
+                if highlight then highlight:Destroy() end
+            end
+        end
+    end
+end)
+
+-- =============================================
+-- ЛОГИКА АНИМАЦИИ ЗАГРУЗКИ И ЗАПУСКА
+-- =============================================
+
+task.spawn(function()
+    -- Анимация заполнения шкалы
+    local tweenInfo = TweenInfo.new(1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(ProgressBarFill, tweenInfo, {Size = UDim2.new(1, 0, 1, 0)})
+    tween:Play()
+    
+    task.wait(0.6)
+    LoadStatus.Text = "Проверка компонентов..."
+    task.wait(0.6)
+    LoadStatus.Text = "Готово!"
+    task.wait(0.6)
+
+    -- Исчезновение загрузки
+    local fadeOut = TweenService:Create(LoadingFrame, TweenInfo.new(0.4), {BackgroundTransparency = 1})
+    fadeOut:Play()
+    
+    for _, child in ipairs(LoadingFrame:GetChildren()) do
+        if child:IsA("TextLabel") then
+            TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+        elseif child:IsA("Frame") then
+            TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        end
+    end
+    
+    task.wait(0.4)
+    LoadingFrame:Destroy()
+    
+    -- Появление главного закруглённого окна
+    MainFrame.Visible = true
+end)
